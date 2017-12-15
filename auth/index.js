@@ -6,7 +6,7 @@ const googleAuth = require('google-auth-library');
 require('dotenv').config()
 
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
-              'https://www.googleapis.com/auth/spreadsheets.readonly'];
+              'https://www.googleapis.com/auth/spreadsheets'];
 
 module.exports.authorizeApp = function(callback) {
   // Load client secrets from a local file.
