@@ -25,6 +25,7 @@ const DATA_META = {
 }
 
 exports.whatToEat = function(auth) {
+  console.log('Crunching data to order your meal ...')
   return new Promise((resolve, reject) => {
     sheets.spreadsheets.values.get({
       auth: auth,
@@ -46,7 +47,6 @@ exports.whatToEat = function(auth) {
     })
   })
 }
-
 
 /**
 {"spreadsheetId": "1zyDPbJW_uiBtyrcW76emImzcgTu9ZJQxf9g60WhZuqE",
@@ -73,6 +73,7 @@ exports.whatToEat = function(auth) {
   @orders: List of order for whole week returned from `#computeWholeWeekOrder`
 **/
 exports.updateMyOrder = function(auth, orders) {
+  console.log('Ordering your next week lunch ...')
   const request = {
     // The ID of the spreadsheet to update.
     spreadsheetId: process.env.SHEET_ID,
@@ -91,13 +92,33 @@ exports.updateMyOrder = function(auth, orders) {
       if (err) {
         return reject(err)
       }
-      resolve(response)
+      resolve(order)
     })
   })
 }
 
 exports.checkMyRow = function(auth) {
-
+  console.log('Checking your name in order sheet ...')
+  return new Promise((resolve, reject) => {
+    sheets.spreadsheets.values.get({
+      auth: auth,
+      spreadsheetId: process.env.SHEET_ID,
+      range: process.env.MY_ROW,
+    }, function(err, response) {
+      if(err) {
+        console.log('The API returned an error: ' + err)
+        return reject(err)
+      } else {
+        let rows = response.values
+        if (rows.length == 0) {
+          console.log('No data found.')
+          reject(new Error('No data found'))
+        } else {
+          resolve(_.first(rows).indexOf(process.env.MY_NAME) > -1)
+        }
+      }
+    })
+  })
 }
 
 // Let the crowd decide what is the best to have for lunch next week

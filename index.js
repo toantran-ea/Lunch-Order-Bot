@@ -1,32 +1,40 @@
 const auth = require('./auth')
 const sheet = require('./sheet')
+const gmail = require('./gmail')
+const utils = require('./utils')
+const noti = require('./notification')
 
 auth.authorizeApp(function(auth) {
-  console.log(auth)
-  sheet.whatToEat(auth)
+  sheet.checkMyRow(auth)
+    .then(isMyNameFound => {
+      console.log('there is your name!!!')
+      if(isMyNameFound) {
+        return sheet.whatToEat(auth)
+      } else {
+        throw new Error('Could not found my name in the sheet!!! Awwwwww!!!')
+      }
+    })
     .then(orders => {
-      return sheet.updateMyOrder(auth, orders)
-    }).
-    then(response => {
-        console.log(JSON.stringify(response, null, 2));
+      console.log('Here is your order >>> \n', orders)
+      // return sheet.updateMyOrder(auth, orders)
+    })
+    .then(response => {
+      console.log('All good! send you a message now!')
+      return noti.slack('all good')
     })
     .catch(err => {
       console.log('error ', err)
+      noti.slack(err)
     })
 })
 
-auth.authorizeApp(function(auth) {
-  let orders = [ "Bò nướng sa tế",
-  "Trứng cuộn phô mai",
-  "Cải chua xào trứng",
-  "Thịt kho tàu",
-  "Bò xào lá giang" ]
-
-  sheet.updateMyOrder(auth, orders)
-  .then(orders => {
-    console.log('ok')
-  })
-  .catch(err => {
-    console.error('error', err)
-  })
-})
+// auth.authorizeApp(auth => {
+//   gmail.readEmailContent(auth, '1603549062443699')
+//     .then(response => {
+//       console.log('response', response)
+//       console.log('id', _.first(utils.utils.extractURLs(response.snippet)))
+//     })
+//     .catch(err => {
+//       console.error('error ', err)
+//     })
+// })

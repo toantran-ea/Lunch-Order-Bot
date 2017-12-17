@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@slack/client": "^3.14.2",
     "dotenv": "^4.0.0",
+    "get-urls": "^7.2.0",
     "google-auth-library": "^0.12.0",
     "googleapis": "^23.0.0",
     "lodash": "^4.17.4"
